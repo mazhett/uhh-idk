@@ -1,0 +1,73 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const characterForm = document.getElementById('characterForm');
+    const characterList = document.getElementById('characterList');
+
+    characterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const character = {
+            id: Date.now(),
+            name: document.getElementById('characterName').value,
+            nationality: document.getElementById('characterNationality').value,
+            profession: document.getElementById('characterProfession').value,
+            age: document.getElementById('characterAge').value,
+            health: document.getElementById('characterHealth').value,
+            stamina: document.getElementById('characterStamina').value,
+            dash: document.getElementById('characterDash').value,
+            intelligence: document.getElementById('characterIntelligence').value,
+            strength: document.getElementById('characterStrength').value,
+            equipmentMastery: document.getElementById('characterEquipmentMastery').value
+        };
+
+        addCharacterToList(character);
+        saveCharacter(character);
+
+        characterForm.reset();
+    });
+
+    function addCharacterToList(character) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <strong>Nome:</strong> ${character.name}<br>
+            <strong>Nacionalidade:</strong> ${character.nationality}<br>
+            <strong>Profissão:</strong> ${character.profession}<br>
+            <strong>Idade:</strong> ${character.age}<br>
+            <strong>Vida:</strong> ${character.health}<br>
+            <strong>Stamina:</strong> ${character.stamina}<br>
+            <strong>Dash:</strong> ${character.dash}<br>
+            <strong>Inteligência:</strong> ${character.intelligence}<br>
+            <strong>Força:</strong> ${character.strength}<br>
+            <strong>Maestria em Equipamentos:</strong> ${character.equipmentMastery}
+            <button class="delete-button"><i class="fas fa-trash-alt"></i></button>
+        `;
+        characterList.appendChild(listItem);
+
+        listItem.querySelector('.delete-button').addEventListener('click', function() {
+            deleteCharacter(character.id);
+            characterList.removeChild(listItem);
+        });
+    }
+
+    function saveCharacter(character) {
+        const characters = getCharactersFromStorage();
+        characters.push(character);
+        localStorage.setItem('characters', JSON.stringify(characters));
+    }
+
+    function deleteCharacter(id) {
+        let characters = getCharactersFromStorage();
+        characters = characters.filter(character => character.id !== id);
+        localStorage.setItem('characters', JSON.stringify(characters));
+    }
+
+    function getCharactersFromStorage() {
+        return JSON.parse(localStorage.getItem('characters')) || [];
+    }
+
+    function loadCharacters() {
+        const characters = getCharactersFromStorage();
+        characters.forEach(character => addCharacterToList(character));
+    }
+
+    loadCharacters();
+});
